@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - FinanceHub</title>
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💰</text></svg>">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: var(--light-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .login-logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .login-logo h1 {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin: 0;
+        }
+        .login-logo span {
+            color: var(--accent-color);
+        }
+        .auth-container {
+            width: 100%;
+            max-width: 450px;
+            padding: 20px;
+        }
+        .auth-box {
+            background: var(--white);
+            padding: 40px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            text-align: center;
+        }
+        .auth-box h2 {
+            color: var(--primary-color);
+            margin-bottom: 30px;
+            font-size: 1.8rem;
+        }
+        .auth-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+        .auth-tab {
+            flex: 1;
+            padding: 12px;
+            background: var(--light-color);
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+            color: var(--text-light);
+            transition: var(--transition);
+            cursor: pointer;
+            border: none;
+        }
+        .auth-tab.active {
+            background: var(--secondary-color);
+            color: var(--white);
+        }
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--light-color);
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: var(--transition);
+            box-sizing: border-box;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            transition: var(--transition);
+            font-size: 1rem;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-primary {
+            background: var(--secondary-color);
+            color: var(--white);
+            box-shadow: var(--shadow);
+        }
+        .btn-primary:hover {
+            background: var(--primary-color);
+            transform: translateY(-2px);
+        }
+        .btn-outline {
+            border: 2px solid var(--secondary-color);
+            color: var(--secondary-color);
+            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .btn-outline:hover {
+            background: var(--secondary-color);
+            color: var(--white);
+        }
+        .auth-divider {
+            text-align: center;
+            margin: 20px 0;
+            position: relative;
+            color: var(--text-light);
+        }
+        .auth-divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: var(--light-color);
+        }
+        .auth-divider span {
+            background: var(--white);
+            padding: 0 15px;
+            position: relative;
+        }
+        .social-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        .remember-forgot {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        .remember-forgot label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-light);
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        .remember-forgot a {
+            color: var(--secondary-color);
+            font-size: 0.9rem;
+            text-decoration: none;
+        }
+        .terms-checkbox {
+            margin-bottom: 25px;
+            text-align: left;
+        }
+        .terms-checkbox label {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            color: var(--text-light);
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        .terms-checkbox input {
+            margin-top: 4px;
+        }
+        
+        /* Modal Styles */
+        .modal {
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: var(--white);
+            padding: 0;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            width: 90%;
+            max-width: 450px;
+            animation: modalSlideIn 0.3s ease-out;
+        }
+        
+        .modal-header {
+            padding: 25px 30px 20px;
+            border-bottom: 1px solid var(--light-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h3 {
+            margin: 0;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+        }
+        
+        .close {
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .close:hover {
+            color: var(--primary-color);
+        }
+        
+        .modal-body {
+            padding: 25px 30px 30px;
+        }
+        
+        .modal-body p {
+            color: var(--text-light);
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+        
+        .modal-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+        
+        .modal-actions .btn {
+            flex: 1;
+        }
+        
+        .validation-message {
+            font-size: 0.85rem;
+            margin-top: 5px;
+            min-height: 20px;
+        }
+        
+        .validation-message.error {
+            color: #e74c3c;
+        }
+        
+        .validation-message.success {
+            color: #27ae60;
+        }
+        
+        .validation-message.info {
+            color: #3498db;
+        }
+        
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .modal-content {
+                width: 95%;
+                margin: 20px;
+            }
+            
+            .modal-header,
+            .modal-body {
+                padding: 20px;
+            }
+            
+            .modal-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- LOGO -->
+    <div class="login-logo">
+        <h1>Finance<span>Hub</span></h1>
+    </div>
+
+    <!-- AUTH CONTAINER -->
+    <div class="auth-container">
+        <div class="auth-box">
+            <h2>Welcome Back</h2>
+            
+            <div class="auth-tabs">
+                <button class="auth-tab active" id="loginTab">Login</button>
+                <button class="auth-tab" id="registerTab">Register</button>
+            </div>
+
+            <!-- LOGIN FORM -->
+            <form id="loginForm" class="auth-form">
+                <div class="form-group">
+                    <label for="loginEmail">Email Address</label>
+                    <input type="email" id="loginEmail" name="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" name="password" required>
+                </div>
+
+                <div class="remember-forgot">
+                    <label>
+                        <input type="checkbox" name="remember">
+                        <span>Remember me</span>
+                    </label>
+                    <a href="#" id="forgotPasswordLink">Forgot Password?</a>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-bottom: 20px;">Login</button>
+
+                <div class="auth-divider">
+                    <span>Or continue with</span>
+                </div>
+
+                <div class="social-buttons">
+                    <button type="button" class="btn btn-outline" style="flex: 1;">
+                        <svg width="18" height="18" viewBox="0 0 24 24">
+                            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                        </svg>
+                        Google
+                    </button>
+                    <button type="button" class="btn btn-outline" style="flex: 1;">
+                        <svg width="18" height="18" viewBox="0 0 24 24">
+                            <path fill="#00A4EF" d="M11.4 24H0V12.6h11.4V24zM24 24H12.6V12.6H24V24zM11.4 11.4H0V0h11.4v11.4zM24 11.4H12.6V0H24v11.4z"/>
+                        </svg>
+                        Microsoft
+                    </button>
+                </div>
+            </form>
+
+            <!-- REGISTER FORM -->
+            <form id="registerForm" class="auth-form" style="display: none;">
+                <div class="form-group">
+                    <label for="registerName">Full Name</label>
+                    <input type="text" id="registerName" name="name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="registerEmail">Email Address</label>
+                    <input type="email" id="registerEmail" name="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="registerPhone">Phone Number</label>
+                    <input type="tel" id="registerPhone" name="phone">
+                </div>
+
+                <div class="form-group">
+                    <label for="registerPassword">Password</label>
+                    <input type="password" id="registerPassword" name="password" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" required>
+                </div>
+
+                <div class="terms-checkbox">
+                    <label>
+                        <input type="checkbox" name="terms" required>
+                        <span>I agree to the Terms of Service and Privacy Policy</span>
+                    </label>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Create Account</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- FORGOT PASSWORD MODAL -->
+    <div id="forgotPasswordModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Reset Your Password</h3>
+                <span class="close" id="closeForgotModal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>Enter your email address and we'll send you a link to reset your password.</p>
+                <form id="forgotPasswordForm">
+                    <div class="form-group">
+                        <label for="forgotEmail">Email Address</label>
+                        <input type="email" id="forgotEmail" name="email" required>
+                        <div class="validation-message" id="forgotEmailValidation"></div>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-outline" id="cancelForgotPassword">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Send Reset Link</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
+
+
